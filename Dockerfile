@@ -1,11 +1,29 @@
-FROM alpine:edge
+FROM debian:stable
 
-ADD bird-wrapper.sh /opt/bird-wrapper.sh
-ADD bird.conf /etc/bird.conf
+EXPOSE 179
 
-RUN mkdir -p /etc/bird
-RUN echo 'http://dl-cdn.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories
-RUN apk add --no-cache bird
+RUN apt-get update && apt-get install -y \
+        autoconf \
+	bison \
+	nano net-tools htop mtr bind9-dnsutils dnsutils \
+	build-essential \
+	curl \
+	flex \
+	libreadline-dev \
+	libncurses5-dev \
+	m4 \
+	unzip
 
-ENTRYPOINT ["/opt/bird-wrapper.sh"]
-CMD ["/bin/sh"]
+WORKDIR /root
+RUN curl -O -L https://bird.network.cz/download/bird-2.0.8.tar.gz
+RUN tar -zxvf bird-2.0.8.tar.gz
+
+RUN mkdir /etc/bird
+RUN cd bird-2.0.8 && \
+	autoconf && \
+	autoheader && \
+	./configure && \
+	make && \
+	make install
+COPY bird.conf /etc/bird/bird.conf
+CMD bird -c /etc/bird/bird.conf -d
