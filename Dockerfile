@@ -15,11 +15,11 @@ RUN apt-get update && apt-get install -y \
 	unzip
 
 WORKDIR /root
-RUN curl -O -L https://bird.network.cz/download/bird-2.0.8.tar.gz
-RUN tar -zxvf bird-2.0.8.tar.gz
+RUN curl -O -L https://bird.network.cz/download/bird-2.15.1.tar.gz
+RUN tar -zxvf bird-2.15.1.tar.gz
 
 RUN mkdir /etc/bird
-RUN cd bird-2.0.8 && \
+RUN cd bird-2.15.1 && \
 	autoconf && \
 	autoheader && \
 	./configure && \
